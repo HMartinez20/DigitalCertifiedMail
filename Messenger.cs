@@ -29,14 +29,14 @@ namespace DigitalCertifiedMail
         {
             var = textMessage.Text;
             string cryptedString = Encrypt(var);
-            textDecrypted.Text = cryptedString;
+            textEncrypted.Text = cryptedString;
             textMessage.Enabled = false;
         }
         
         private void btnDecrypt_Click(object sender, EventArgs e)
         {
             string cryptedString = Encrypt(var);
-            textDecrypted.Text = String.Empty;
+            textEncrypted.Text = String.Empty;
             textMessage.Enabled = true;
             textMessage.Text = var;
         }
@@ -79,9 +79,9 @@ namespace DigitalCertifiedMail
 
         private void Form1_Load(object sender, EventArgs e){}
 
-        private void textDecrypted_TextChanged(object sender, EventArgs e)
+        private void textEncrypted_TextChanged(object sender, EventArgs e)
         {
-            if (textDecrypted.Text != String.Empty)
+            if (textEncrypted.Text != String.Empty)
                 btnSend.Enabled = true;
             else
                 btnSend.Enabled = false;
@@ -102,7 +102,7 @@ namespace DigitalCertifiedMail
                 flag = false;
                 errorMsg += "To\n";
             }
-            if (textDecrypted.Text == String.Empty)
+            if (textEncrypted.Text == String.Empty)
             {
                 flag = false;
                 errorMsg += "Decrypted Message\n";
