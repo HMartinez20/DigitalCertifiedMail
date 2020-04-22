@@ -37,38 +37,38 @@
             this.textTo = new System.Windows.Forms.ComboBox();
             this.textFrom = new System.Windows.Forms.ComboBox();
             this.textMessage = new System.Windows.Forms.TextBox();
-            this.textDecrypted = new System.Windows.Forms.TextBox();
+            this.textEncrypted = new System.Windows.Forms.TextBox();
             this.labelHelp = new System.Windows.Forms.Label();
-            this.labelDecrypted = new System.Windows.Forms.Label();
+            this.labelEncrypted = new System.Windows.Forms.Label();
             this.SuspendLayout();
             // 
             // btnEncrypt
             // 
-            this.btnEncrypt.Font = new System.Drawing.Font("Yu Gothic UI", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.btnEncrypt.Location = new System.Drawing.Point(345, 240);
+            this.btnEncrypt.Font = new System.Drawing.Font("Yu Gothic UI", 11.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.btnEncrypt.Location = new System.Drawing.Point(101, 319);
             this.btnEncrypt.Name = "btnEncrypt";
             this.btnEncrypt.Size = new System.Drawing.Size(121, 36);
             this.btnEncrypt.TabIndex = 3;
-            this.btnEncrypt.Text = "Encrypt -->\r\n";
+            this.btnEncrypt.Text = "Encrypt";
             this.btnEncrypt.UseVisualStyleBackColor = true;
             this.btnEncrypt.Click += new System.EventHandler(this.btnEncrypt_Click);
             // 
             // btnDecrypt
             // 
-            this.btnDecrypt.Font = new System.Drawing.Font("Yu Gothic UI", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.btnDecrypt.Location = new System.Drawing.Point(345, 319);
+            this.btnDecrypt.Font = new System.Drawing.Font("Yu Gothic UI", 11.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.btnDecrypt.Location = new System.Drawing.Point(417, 319);
             this.btnDecrypt.Name = "btnDecrypt";
             this.btnDecrypt.Size = new System.Drawing.Size(121, 36);
             this.btnDecrypt.TabIndex = 4;
-            this.btnDecrypt.Text = "<-- Decrypt";
+            this.btnDecrypt.Text = "Decrypt";
             this.btnDecrypt.UseVisualStyleBackColor = true;
             this.btnDecrypt.Click += new System.EventHandler(this.btnDecrypt_Click);
             // 
             // btnSend
             // 
             this.btnSend.Enabled = false;
-            this.btnSend.Font = new System.Drawing.Font("Yu Gothic UI", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.btnSend.Location = new System.Drawing.Point(656, 482);
+            this.btnSend.Font = new System.Drawing.Font("Yu Gothic UI", 11.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.btnSend.Location = new System.Drawing.Point(480, 471);
             this.btnSend.Name = "btnSend";
             this.btnSend.Size = new System.Drawing.Size(121, 36);
             this.btnSend.TabIndex = 5;
@@ -79,110 +79,110 @@
             // labelMessage
             // 
             this.labelMessage.AutoSize = true;
-            this.labelMessage.Font = new System.Drawing.Font("Yu Gothic UI", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.labelMessage.Location = new System.Drawing.Point(29, 117);
+            this.labelMessage.Font = new System.Drawing.Font("Yu Gothic UI", 11.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.labelMessage.Location = new System.Drawing.Point(23, 93);
             this.labelMessage.Name = "labelMessage";
-            this.labelMessage.Size = new System.Drawing.Size(71, 21);
+            this.labelMessage.Size = new System.Drawing.Size(67, 20);
             this.labelMessage.TabIndex = 8;
             this.labelMessage.Text = "Message";
             // 
             // labelFrom
             // 
             this.labelFrom.AutoSize = true;
-            this.labelFrom.Font = new System.Drawing.Font("Yu Gothic UI", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.labelFrom.Location = new System.Drawing.Point(29, 31);
+            this.labelFrom.Font = new System.Drawing.Font("Yu Gothic UI", 11.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.labelFrom.Location = new System.Drawing.Point(23, 21);
             this.labelFrom.Name = "labelFrom";
-            this.labelFrom.Size = new System.Drawing.Size(46, 21);
+            this.labelFrom.Size = new System.Drawing.Size(42, 20);
             this.labelFrom.TabIndex = 10;
             this.labelFrom.Text = "From";
             // 
             // labelTo
             // 
             this.labelTo.AutoSize = true;
-            this.labelTo.Font = new System.Drawing.Font("Yu Gothic UI", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.labelTo.Location = new System.Drawing.Point(470, 31);
+            this.labelTo.Font = new System.Drawing.Font("Yu Gothic UI", 11.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.labelTo.Location = new System.Drawing.Point(334, 21);
             this.labelTo.Name = "labelTo";
-            this.labelTo.Size = new System.Drawing.Size(25, 21);
+            this.labelTo.Size = new System.Drawing.Size(24, 20);
             this.labelTo.TabIndex = 11;
             this.labelTo.Text = "To";
             // 
             // textTo
             // 
-            this.textTo.Font = new System.Drawing.Font("Yu Gothic UI", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.textTo.Font = new System.Drawing.Font("Yu Gothic UI", 11.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.textTo.FormattingEnabled = true;
             this.textTo.Items.AddRange(new object[] {
             "receiver@gmail.com"});
-            this.textTo.Location = new System.Drawing.Point(474, 65);
+            this.textTo.Location = new System.Drawing.Point(338, 45);
             this.textTo.Name = "textTo";
-            this.textTo.Size = new System.Drawing.Size(303, 29);
+            this.textTo.Size = new System.Drawing.Size(263, 28);
             this.textTo.TabIndex = 13;
             // 
             // textFrom
             // 
             this.textFrom.BackColor = System.Drawing.SystemColors.Window;
             this.textFrom.FlatStyle = System.Windows.Forms.FlatStyle.System;
-            this.textFrom.Font = new System.Drawing.Font("Yu Gothic UI", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.textFrom.Font = new System.Drawing.Font("Yu Gothic UI", 11.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.textFrom.FormattingEnabled = true;
             this.textFrom.Items.AddRange(new object[] {
             "sender@gmail.com"});
-            this.textFrom.Location = new System.Drawing.Point(33, 65);
+            this.textFrom.Location = new System.Drawing.Point(27, 45);
             this.textFrom.Name = "textFrom";
-            this.textFrom.Size = new System.Drawing.Size(303, 29);
+            this.textFrom.Size = new System.Drawing.Size(263, 28);
             this.textFrom.TabIndex = 12;
             // 
             // textMessage
             // 
-            this.textMessage.Font = new System.Drawing.Font("Yu Gothic UI", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.textMessage.Location = new System.Drawing.Point(33, 156);
+            this.textMessage.Font = new System.Drawing.Font("Yu Gothic UI", 11.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.textMessage.Location = new System.Drawing.Point(27, 117);
             this.textMessage.Multiline = true;
             this.textMessage.Name = "textMessage";
             this.textMessage.ScrollBars = System.Windows.Forms.ScrollBars.Vertical;
-            this.textMessage.Size = new System.Drawing.Size(303, 280);
+            this.textMessage.Size = new System.Drawing.Size(263, 196);
             this.textMessage.TabIndex = 0;
             this.textMessage.TextChanged += new System.EventHandler(this.textMessage_TextChanged);
             // 
-            // textDecrypted
+            // textEncrypted
             // 
-            this.textDecrypted.Enabled = false;
-            this.textDecrypted.Font = new System.Drawing.Font("Yu Gothic UI", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.textDecrypted.Location = new System.Drawing.Point(474, 156);
-            this.textDecrypted.Multiline = true;
-            this.textDecrypted.Name = "textDecrypted";
-            this.textDecrypted.ScrollBars = System.Windows.Forms.ScrollBars.Vertical;
-            this.textDecrypted.Size = new System.Drawing.Size(303, 280);
-            this.textDecrypted.TabIndex = 14;
-            this.textDecrypted.TextChanged += new System.EventHandler(this.textDecrypted_TextChanged);
+            this.textEncrypted.Enabled = false;
+            this.textEncrypted.Font = new System.Drawing.Font("Yu Gothic UI", 11.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.textEncrypted.Location = new System.Drawing.Point(338, 117);
+            this.textEncrypted.Multiline = true;
+            this.textEncrypted.Name = "textEncrypted";
+            this.textEncrypted.ScrollBars = System.Windows.Forms.ScrollBars.Vertical;
+            this.textEncrypted.Size = new System.Drawing.Size(263, 196);
+            this.textEncrypted.TabIndex = 14;
+            this.textEncrypted.TextChanged += new System.EventHandler(this.textEncrypted_TextChanged);
             // 
             // labelHelp
             // 
             this.labelHelp.AutoSize = true;
-            this.labelHelp.Font = new System.Drawing.Font("Yu Gothic UI", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.labelHelp.Location = new System.Drawing.Point(29, 466);
+            this.labelHelp.Font = new System.Drawing.Font("Yu Gothic UI", 11.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.labelHelp.Location = new System.Drawing.Point(23, 383);
             this.labelHelp.Name = "labelHelp";
-            this.labelHelp.Size = new System.Drawing.Size(555, 63);
+            this.labelHelp.Size = new System.Drawing.Size(539, 60);
             this.labelHelp.TabIndex = 15;
             this.labelHelp.Text = "After a message is encrypted, press \"Decrypt\" to edit the message.\r\nAn email addr" +
-    "ess in the \"From\" and \"To\" boxes, as well as text in the \"Decrypted\r\nMessage\" te" +
-    "xtbox, is required to send a message.";
+    "ess in the \"From\" and \"To\" boxes, as well as text in the \"Decrypted \r\nMessage\" t" +
+    "extbox, is required to send a message.";
             // 
-            // labelDecrypted
+            // labelEncrypted
             // 
-            this.labelDecrypted.AutoSize = true;
-            this.labelDecrypted.Font = new System.Drawing.Font("Yu Gothic UI", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.labelDecrypted.Location = new System.Drawing.Point(470, 117);
-            this.labelDecrypted.Name = "labelDecrypted";
-            this.labelDecrypted.Size = new System.Drawing.Size(146, 21);
-            this.labelDecrypted.TabIndex = 16;
-            this.labelDecrypted.Text = "Decrypted Message";
+            this.labelEncrypted.AutoSize = true;
+            this.labelEncrypted.Font = new System.Drawing.Font("Yu Gothic UI", 11.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.labelEncrypted.Location = new System.Drawing.Point(334, 93);
+            this.labelEncrypted.Name = "labelEncrypted";
+            this.labelEncrypted.Size = new System.Drawing.Size(140, 20);
+            this.labelEncrypted.TabIndex = 16;
+            this.labelEncrypted.Text = "Decrypted Message";
             // 
             // Messenger
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(812, 558);
-            this.Controls.Add(this.labelDecrypted);
+            this.ClientSize = new System.Drawing.Size(635, 545);
+            this.Controls.Add(this.labelEncrypted);
             this.Controls.Add(this.labelHelp);
-            this.Controls.Add(this.textDecrypted);
+            this.Controls.Add(this.textEncrypted);
             this.Controls.Add(this.textTo);
             this.Controls.Add(this.textFrom);
             this.Controls.Add(this.labelTo);
@@ -211,9 +211,9 @@
         private System.Windows.Forms.Label labelTo;
         private System.Windows.Forms.ComboBox textFrom;
         private System.Windows.Forms.ComboBox textTo;
-        private System.Windows.Forms.TextBox textDecrypted;
+        private System.Windows.Forms.TextBox textEncrypted;
         private System.Windows.Forms.Label labelHelp;
-        private System.Windows.Forms.Label labelDecrypted;
+        private System.Windows.Forms.Label labelEncrypted;
     }
 }
 

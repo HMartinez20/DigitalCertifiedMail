@@ -16,7 +16,7 @@ namespace DigitalCertifiedMail
         {
             Application.EnableVisualStyles();
             Application.SetCompatibleTextRenderingDefault(false);
-            Application.Run(new Messenger());
+            Application.Run(new MainMenu());
         }
     }
 }
