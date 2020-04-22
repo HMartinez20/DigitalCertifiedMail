@@ -13,39 +13,32 @@ using System.IO;
 
 namespace DigitalCertifiedMail
 {
-    public partial class Form1 : Form
+    public partial class Messenger : Form
     {
-        public Form1()
+        public Messenger()
         {
             InitializeComponent();
+
         }
         static byte[] bytes = ASCIIEncoding.ASCII.GetBytes("ZeroCool");
         string var;
-        private void label2_Click(object sender, EventArgs e)
-        {
 
-        }
-
-        public void textBox1_TextChanged(object sender, EventArgs e)
+        public void textMessage_TextChanged(object sender, EventArgs e){}
+        
+        public void btnEncrypt_Click(object sender, EventArgs e)
         {
-    
+            var = textMessage.Text;
+            string cryptedString = Encrypt(var);
+            textDecrypted.Text = cryptedString;
+            textMessage.Enabled = false;
         }
         
-        public void button1_Click(object sender, EventArgs e)
-        {
-           
-            var = textBox1.Text;
-            string cryptedString = Encrypt(var);
-            textBox1.Text = String.Empty;
-            textBox1.Text += cryptedString;
-
-        }
-        
-        private void button2_Click(object sender, EventArgs e)
+        private void btnDecrypt_Click(object sender, EventArgs e)
         {
             string cryptedString = Encrypt(var);
-            textBox1.Text = String.Empty;
-            textBox1.Text += var;
+            textDecrypted.Text = String.Empty;
+            textMessage.Enabled = true;
+            textMessage.Text = var;
         }
 
         public static string Encrypt(string var)
@@ -69,7 +62,6 @@ namespace DigitalCertifiedMail
 
         }
 
-
         public static string Decrypt(string cryptedString)
         {
             if (String.IsNullOrEmpty(cryptedString))
@@ -85,11 +77,47 @@ namespace DigitalCertifiedMail
             return reader.ReadToEnd();
         }
 
-            private void textBox4_TextChanged(object sender, EventArgs e)
+        private void Form1_Load(object sender, EventArgs e){}
+
+        private void textDecrypted_TextChanged(object sender, EventArgs e)
         {
-           
+            if (textDecrypted.Text != String.Empty)
+                btnSend.Enabled = true;
+            else
+                btnSend.Enabled = false;
+        }
+
+        private void btnSend_Click(object sender, EventArgs e)
+        {
+            bool flag = true;
+            var errorMsg = "Please include the following:\n";
+
+            if (textFrom.Text == String.Empty)
+            {
+                flag = false;
+                errorMsg += "From\n";
+            }
+            if (textTo.Text == String.Empty)
+            {
+                flag = false;
+                errorMsg += "To\n";
+            }
+            if (textDecrypted.Text == String.Empty)
+            {
+                flag = false;
+                errorMsg += "Decrypted Message\n";
+            }
+
+            if (flag)
+                sendMessage();
+            else
+                MessageBox.Show(errorMsg, "Missing Fields");
+        }
+
+        private void sendMessage()
+        {
+
         }
     }
    
 }
-
