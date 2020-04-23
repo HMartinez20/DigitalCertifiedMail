@@ -9,7 +9,8 @@ using System.Threading.Tasks;
 using System.Windows.Forms;
 using System.Security.Cryptography;
 using System.IO;
-using System.Management.Instrumentation;
+using System.Net.Mail;
+using System.Net;
 
 namespace DigitalCertifiedMail
 {
@@ -20,31 +21,47 @@ namespace DigitalCertifiedMail
             InitializeComponent();
 
         }
-        private void Form1_Load(object sender, EventArgs e)
+        static byte[] bytes = ASCIIEncoding.ASCII.GetBytes("ZeroCool");
+        string var;
+
+        public void textMessage_LostFocus(object sender, EventArgs e) 
         {
-            GenKey_SaveInContainer("MyKeyContainer");
-            GetKeyFromContainer("MyKeyContainer");
+
+            var bogusMsg = "";
+            Random random = new Random();
+
+            char letter;
+            foreach (char c in textMessage.Text)
+            {
+                if (c == ' ')
+                    bogusMsg += " ";
+                else
+                {
+                    double flt = random.NextDouble();
+                    int shift = Convert.ToInt32(Math.Floor(25 * flt));
+                    letter = Convert.ToChar(shift + 65);
+                    bogusMsg += letter;
+                }
+            }
+            textBogus.Text = bogusMsg;
 
         }
-        static byte[] bytes = ASCIIEncoding.ASCII.GetBytes("ZeroCool");
-        string var, cryptedString;
-
-        public void textMessage_TextChanged(object sender, EventArgs e) { }
 
         public void btnEncrypt_Click(object sender, EventArgs e)
         {
             var = textMessage.Text;
-            cryptedString = Encrypt(var);
+            string cryptedString = Encrypt(var);
             textEncrypted.Text = cryptedString;
             textMessage.Enabled = false;
         }
-
+        
         private void btnDecrypt_Click(object sender, EventArgs e)
         {
-            string decryptedString = Decrypt(cryptedString);
+            string cryptedString = Encrypt(var);
             textEncrypted.Text = String.Empty;
+            textBogus.Text = String.Empty;
             textMessage.Enabled = true;
-            textEncrypted.Text = decryptedString;
+            textMessage.Text = var;
         }
 
         public static string Encrypt(string var)
@@ -83,56 +100,8 @@ namespace DigitalCertifiedMail
             return reader.ReadToEnd();
         }
 
-       
-        public static void GenKey_SaveInContainer(string ContainerName)
-        {
-            // Create the CspParameters object and set the key container
-            // name used to store the RSA key pair.  
-            CspParameters cp = new CspParameters();
-            cp.KeyContainerName = ContainerName;
+        private void Form1_Load(object sender, EventArgs e){}
 
-            // Create a new instance of RSACryptoServiceProvider that accesses  
-            // the key container MyKeyContainerName.  
-            RSACryptoServiceProvider rsa = new RSACryptoServiceProvider(cp);
-
-            // Display the key information to the console.  
-            Console.WriteLine("Key added to container: \n  {0}", rsa.ToXmlString(true));
-        }
-        public static void GetKeyFromContainer(string ContainerName)
-        {
-            // Create the CspParameters object and set the key container
-            // name used to store the RSA key pair.  
-            CspParameters cp = new CspParameters();
-            cp.KeyContainerName = ContainerName;
-
-            // Create a new instance of RSACryptoServiceProvider that accesses  
-            // the key container MyKeyContainerName.  
-            RSACryptoServiceProvider rsa = new RSACryptoServiceProvider(cp);
-
-            // Display the key information to the console.  
-            Console.WriteLine("Key retrieved from container : \n {0}", rsa.ToXmlString(true));
-          
-        }
-
-        public static void DeleteKeyFromContainer(string ContainerName)
-        {
-            // Create the CspParameters object and set the key container
-            // name used to store the RSA key pair.  
-            CspParameters cp = new CspParameters();
-            cp.KeyContainerName = ContainerName;
-
-            // Create a new instance of RSACryptoServiceProvider that accesses  
-            // the key container.  
-            RSACryptoServiceProvider rsa = new RSACryptoServiceProvider(cp);
-
-            // Delete the key entry in the container.  
-            rsa.PersistKeyInCsp = false;
-
-            // Call Clear to release resources and delete the key from the container.  
-            rsa.Clear();
-
-            Console.WriteLine("Key deleted.");
-        }
         private void textEncrypted_TextChanged(object sender, EventArgs e)
         {
             if (textEncrypted.Text != String.Empty)
@@ -170,7 +139,28 @@ namespace DigitalCertifiedMail
 
         private void sendMessage()
         {
+            MailMessage message = new MailMessage(textFrom.Text, textTo.Text);
+            message.Subject = "Please Sign";
+            message.Body = textEncrypted.Text;
 
+            SmtpClient client = new SmtpClient("smtp.mailtrap.io", 2525);
+            client.EnableSsl = true;
+            
+            // Credentials are provided by mailtrap.io
+            // Emails using these credentials will be "trapped" in a private inbox.
+            client.Credentials = new NetworkCredential("1187a0fe3e0b30", "6c9f57cd6a7a23");
+
+            try
+            {
+                client.Send(message);
+                MessageBox.Show("Email sent!", "Send Message");
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show("Error!", "Send Message");
+                Console.WriteLine("Exception caught in CreateTestMessage2(): {0}",
+                    ex.ToString());
+            }
         }
     }
    

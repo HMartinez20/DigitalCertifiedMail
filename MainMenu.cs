@@ -33,6 +33,10 @@ namespace DigitalCertifiedMail
         {
             this.Close();
         }
-        
+
+        private void listUsers_SelectedIndexChanged(object sender, EventArgs e)
+        {
+
+        }
     }
 }
