@@ -9,7 +9,8 @@ using System.Threading.Tasks;
 using System.Windows.Forms;
 using System.Security.Cryptography;
 using System.IO;
-
+using System.Net.Mail;
+using System.Net;
 
 namespace DigitalCertifiedMail
 {
@@ -23,8 +24,29 @@ namespace DigitalCertifiedMail
         static byte[] bytes = ASCIIEncoding.ASCII.GetBytes("ZeroCool");
         string var;
 
-        public void textMessage_TextChanged(object sender, EventArgs e){}
-        
+        public void textMessage_LostFocus(object sender, EventArgs e) 
+        {
+
+            var bogusMsg = "";
+            Random random = new Random();
+
+            char letter;
+            foreach (char c in textMessage.Text)
+            {
+                if (c == ' ')
+                    bogusMsg += " ";
+                else
+                {
+                    double flt = random.NextDouble();
+                    int shift = Convert.ToInt32(Math.Floor(25 * flt));
+                    letter = Convert.ToChar(shift + 65);
+                    bogusMsg += letter;
+                }
+            }
+            textBogus.Text = bogusMsg;
+
+        }
+
         public void btnEncrypt_Click(object sender, EventArgs e)
         {
             var = textMessage.Text;
@@ -37,6 +59,7 @@ namespace DigitalCertifiedMail
         {
             string cryptedString = Encrypt(var);
             textEncrypted.Text = String.Empty;
+            textBogus.Text = String.Empty;
             textMessage.Enabled = true;
             textMessage.Text = var;
         }
@@ -116,7 +139,28 @@ namespace DigitalCertifiedMail
 
         private void sendMessage()
         {
+            MailMessage message = new MailMessage(textFrom.Text, textTo.Text);
+            message.Subject = "Please Sign";
+            message.Body = textEncrypted.Text;
 
+            SmtpClient client = new SmtpClient("smtp.mailtrap.io", 2525);
+            client.EnableSsl = true;
+            
+            // Credentials are provided by mailtrap.io
+            // Emails using these credentials will be "trapped" in a private inbox.
+            client.Credentials = new NetworkCredential("1187a0fe3e0b30", "6c9f57cd6a7a23");
+
+            try
+            {
+                client.Send(message);
+                MessageBox.Show("Email sent!", "Send Message");
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show("Error!", "Send Message");
+                Console.WriteLine("Exception caught in CreateTestMessage2(): {0}",
+                    ex.ToString());
+            }
         }
     }
    
