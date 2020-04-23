@@ -32,6 +32,7 @@
             this.btnNewMsg = new System.Windows.Forms.Button();
             this.btnViewMsgs = new System.Windows.Forms.Button();
             this.btnExit = new System.Windows.Forms.Button();
+            this.listUsers = new System.Windows.Forms.ComboBox();
             this.SuspendLayout();
             // 
             // title
@@ -46,9 +47,9 @@
             // 
             // btnNewMsg
             // 
-            this.btnNewMsg.Location = new System.Drawing.Point(57, 146);
+            this.btnNewMsg.Location = new System.Drawing.Point(58, 167);
             this.btnNewMsg.Name = "btnNewMsg";
-            this.btnNewMsg.Size = new System.Drawing.Size(194, 34);
+            this.btnNewMsg.Size = new System.Drawing.Size(194, 28);
             this.btnNewMsg.TabIndex = 1;
             this.btnNewMsg.Text = "Send a Message";
             this.btnNewMsg.UseVisualStyleBackColor = true;
@@ -56,9 +57,9 @@
             // 
             // btnViewMsgs
             // 
-            this.btnViewMsgs.Location = new System.Drawing.Point(57, 201);
+            this.btnViewMsgs.Location = new System.Drawing.Point(58, 233);
             this.btnViewMsgs.Name = "btnViewMsgs";
-            this.btnViewMsgs.Size = new System.Drawing.Size(194, 34);
+            this.btnViewMsgs.Size = new System.Drawing.Size(194, 28);
             this.btnViewMsgs.TabIndex = 2;
             this.btnViewMsgs.Text = "View Messages";
             this.btnViewMsgs.UseVisualStyleBackColor = true;
@@ -66,19 +67,32 @@
             // 
             // btnExit
             // 
-            this.btnExit.Location = new System.Drawing.Point(57, 298);
+            this.btnExit.Location = new System.Drawing.Point(58, 299);
             this.btnExit.Name = "btnExit";
-            this.btnExit.Size = new System.Drawing.Size(194, 34);
+            this.btnExit.Size = new System.Drawing.Size(194, 28);
             this.btnExit.TabIndex = 3;
             this.btnExit.Text = "Exit";
             this.btnExit.UseVisualStyleBackColor = true;
             this.btnExit.Click += new System.EventHandler(this.btnExit_Click);
             // 
+            // listUsers
+            // 
+            this.listUsers.FormattingEnabled = true;
+            this.listUsers.Items.AddRange(new object[] {
+            "Alice",
+            "Bob"});
+            this.listUsers.Location = new System.Drawing.Point(58, 107);
+            this.listUsers.Name = "listUsers";
+            this.listUsers.Size = new System.Drawing.Size(194, 28);
+            this.listUsers.TabIndex = 4;
+            this.listUsers.SelectedIndexChanged += new System.EventHandler(this.listUsers_SelectedIndexChanged);
+            // 
             // MainMenu
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 20F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(301, 377);
+            this.ClientSize = new System.Drawing.Size(307, 377);
+            this.Controls.Add(this.listUsers);
             this.Controls.Add(this.btnExit);
             this.Controls.Add(this.btnViewMsgs);
             this.Controls.Add(this.btnNewMsg);
@@ -98,5 +112,6 @@
         private System.Windows.Forms.Button btnNewMsg;
         private System.Windows.Forms.Button btnViewMsgs;
         private System.Windows.Forms.Button btnExit;
+        private System.Windows.Forms.ComboBox listUsers;
     }
 }
