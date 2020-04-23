@@ -24,6 +24,26 @@ namespace DigitalCertifiedMail
         static byte[] bytes = ASCIIEncoding.ASCII.GetBytes("ZeroCool");
         string var;
 
+        private void Form1_Load(object sender, EventArgs e)
+        {
+            // Generate Alice's keys (two pairs of private and public - 4 keys total)
+            RSACryptoServiceProvider AliceKey = new RSACryptoServiceProvider();
+            RSAParameters AlicePublic = AliceKey.ExportParameters(false);
+            RSAParameters AlicePrivate = AliceKey.ExportParameters(true);
+
+            RSACryptoServiceProvider AliceKey2 = new RSACryptoServiceProvider();
+            RSAParameters AlicePublic2 = AliceKey2.ExportParameters(false);
+            RSAParameters AlicePrivate2 = AliceKey2.ExportParameters(true);
+
+            // Store keys
+            // Generate Bob's symmetric key using DES
+            // Use random generator to choose Alice's public key A or B
+            // With chosen key (A or B) encrypt it with Bob's DES key
+            // Decrypt Bob's encrypted DES key with Alice's public keys A and B - two separate messages
+            // With the resulting keys - from previous step - encrypt both the real and bogus messages
+            // Email bob with encrypted messages
+        }
+
         public void textMessage_LostFocus(object sender, EventArgs e) 
         {
 
@@ -51,14 +71,14 @@ namespace DigitalCertifiedMail
         {
             var = textMessage.Text;
             string cryptedString = Encrypt(var);
-            textEncrypted.Text = cryptedString;
+            textEnc.Text = cryptedString;
             textMessage.Enabled = false;
         }
         
         private void btnDecrypt_Click(object sender, EventArgs e)
         {
             string cryptedString = Encrypt(var);
-            textEncrypted.Text = String.Empty;
+            textEnc.Text = String.Empty;
             textBogus.Text = String.Empty;
             textMessage.Enabled = true;
             textMessage.Text = var;
@@ -82,7 +102,6 @@ namespace DigitalCertifiedMail
             writer.Flush();
 
             return Convert.ToBase64String(memoryStream.GetBuffer(), 0, (int)memoryStream.Length);
-
         }
 
         public static string Decrypt(string cryptedString)
@@ -100,11 +119,9 @@ namespace DigitalCertifiedMail
             return reader.ReadToEnd();
         }
 
-        private void Form1_Load(object sender, EventArgs e){}
-
         private void textEncrypted_TextChanged(object sender, EventArgs e)
         {
-            if (textEncrypted.Text != String.Empty)
+            if (textEnc.Text != String.Empty)
                 btnSend.Enabled = true;
             else
                 btnSend.Enabled = false;
@@ -125,7 +142,7 @@ namespace DigitalCertifiedMail
                 flag = false;
                 errorMsg += "To\n";
             }
-            if (textEncrypted.Text == String.Empty)
+            if (textEnc.Text == String.Empty)
             {
                 flag = false;
                 errorMsg += "Decrypted Message\n";
@@ -141,7 +158,7 @@ namespace DigitalCertifiedMail
         {
             MailMessage message = new MailMessage(textFrom.Text, textTo.Text);
             message.Subject = "Please Sign";
-            message.Body = textEncrypted.Text;
+            message.Body = textEnc.Text;
 
             SmtpClient client = new SmtpClient("smtp.mailtrap.io", 2525);
             client.EnableSsl = true;
