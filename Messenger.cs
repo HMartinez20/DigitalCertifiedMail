@@ -9,7 +9,7 @@ using System.Threading.Tasks;
 using System.Windows.Forms;
 using System.Security.Cryptography;
 using System.IO;
-
+using System.Management.Instrumentation;
 
 namespace DigitalCertifiedMail
 {
@@ -20,25 +20,31 @@ namespace DigitalCertifiedMail
             InitializeComponent();
 
         }
-        static byte[] bytes = ASCIIEncoding.ASCII.GetBytes("ZeroCool");
-        string var;
+        private void Form1_Load(object sender, EventArgs e)
+        {
+            GenKey_SaveInContainer("MyKeyContainer");
+            GetKeyFromContainer("MyKeyContainer");
 
-        public void textMessage_TextChanged(object sender, EventArgs e){}
-        
+        }
+        static byte[] bytes = ASCIIEncoding.ASCII.GetBytes("ZeroCool");
+        string var, cryptedString;
+
+        public void textMessage_TextChanged(object sender, EventArgs e) { }
+
         public void btnEncrypt_Click(object sender, EventArgs e)
         {
             var = textMessage.Text;
-            string cryptedString = Encrypt(var);
+            cryptedString = Encrypt(var);
             textEncrypted.Text = cryptedString;
             textMessage.Enabled = false;
         }
-        
+
         private void btnDecrypt_Click(object sender, EventArgs e)
         {
-            string cryptedString = Encrypt(var);
+            string decryptedString = Decrypt(cryptedString);
             textEncrypted.Text = String.Empty;
             textMessage.Enabled = true;
-            textMessage.Text = var;
+            textEncrypted.Text = decryptedString;
         }
 
         public static string Encrypt(string var)
@@ -77,8 +83,56 @@ namespace DigitalCertifiedMail
             return reader.ReadToEnd();
         }
 
-        private void Form1_Load(object sender, EventArgs e){}
+       
+        public static void GenKey_SaveInContainer(string ContainerName)
+        {
+            // Create the CspParameters object and set the key container
+            // name used to store the RSA key pair.  
+            CspParameters cp = new CspParameters();
+            cp.KeyContainerName = ContainerName;
 
+            // Create a new instance of RSACryptoServiceProvider that accesses  
+            // the key container MyKeyContainerName.  
+            RSACryptoServiceProvider rsa = new RSACryptoServiceProvider(cp);
+
+            // Display the key information to the console.  
+            Console.WriteLine("Key added to container: \n  {0}", rsa.ToXmlString(true));
+        }
+        public static void GetKeyFromContainer(string ContainerName)
+        {
+            // Create the CspParameters object and set the key container
+            // name used to store the RSA key pair.  
+            CspParameters cp = new CspParameters();
+            cp.KeyContainerName = ContainerName;
+
+            // Create a new instance of RSACryptoServiceProvider that accesses  
+            // the key container MyKeyContainerName.  
+            RSACryptoServiceProvider rsa = new RSACryptoServiceProvider(cp);
+
+            // Display the key information to the console.  
+            Console.WriteLine("Key retrieved from container : \n {0}", rsa.ToXmlString(true));
+          
+        }
+
+        public static void DeleteKeyFromContainer(string ContainerName)
+        {
+            // Create the CspParameters object and set the key container
+            // name used to store the RSA key pair.  
+            CspParameters cp = new CspParameters();
+            cp.KeyContainerName = ContainerName;
+
+            // Create a new instance of RSACryptoServiceProvider that accesses  
+            // the key container.  
+            RSACryptoServiceProvider rsa = new RSACryptoServiceProvider(cp);
+
+            // Delete the key entry in the container.  
+            rsa.PersistKeyInCsp = false;
+
+            // Call Clear to release resources and delete the key from the container.  
+            rsa.Clear();
+
+            Console.WriteLine("Key deleted.");
+        }
         private void textEncrypted_TextChanged(object sender, EventArgs e)
         {
             if (textEncrypted.Text != String.Empty)
