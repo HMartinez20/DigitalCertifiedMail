@@ -117,10 +117,4 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
-  <data name="labelHelp.Text" xml:space="preserve">
-    <value>After a message is encrypted, press "Decrypt" to 
-edit the message. An email address in the "From"
-and "To" boxes, as well as text in the "Decrypted 
-Message" textbox, is required to send a message.</value>
-  </data>
 </root>

@@ -19,10 +19,12 @@ namespace DigitalCertifiedMail
         public Messenger()
         {
             InitializeComponent();
-
         }
-        static byte[] bytes = ASCIIEncoding.ASCII.GetBytes("ZeroCool");
-        string var;
+
+        DES des = DES.Create();
+        byte[] decryptedDESKey1 = { }; // These will be used 
+        byte[] decryptedDESKey2 = { }; // when sending the message!
+        string var = "";
 
         private void Form1_Load(object sender, EventArgs e)
         {
@@ -35,17 +37,77 @@ namespace DigitalCertifiedMail
             RSAParameters AlicePublic2 = AliceKey2.ExportParameters(false);
             RSAParameters AlicePrivate2 = AliceKey2.ExportParameters(true);
 
-            // Store keys
+            Console.WriteLine("Alice Key  : " + AliceKey.ToXmlString(true));
+            Console.WriteLine("Alice Key 2: " + AliceKey2.ToXmlString(true));
+
+
             // Generate Bob's symmetric key using DES
+            // See public variable "des"
+
+
             // Use random generator to choose Alice's public key A or B
-            // With chosen key (A or B) encrypt it with Bob's DES key
+            // With chosen key (A or B) encrypt Bob's DES key
+            byte[] encryptedDESKey = { };
+            byte[] encryptedDESDummyKey = { };
+            var keyChosen = new Random().Next(0, 1);
+            switch (keyChosen)
+            {
+                case 0:
+                    AliceKey.ImportParameters(AlicePublic);
+                    encryptedDESKey = AliceKey.Encrypt(des.Key, false);
+                    AliceKey2.ImportParameters(AlicePublic2);
+                    encryptedDESDummyKey = AliceKey2.Encrypt(DES.Create().Key, false);
+                    break;
+                case 1:
+                    AliceKey2.ImportParameters(AlicePublic2);
+                    encryptedDESKey = AliceKey2.Encrypt(des.Key, false);
+                    AliceKey.ImportParameters(AlicePublic);
+                    encryptedDESDummyKey = AliceKey.Encrypt(DES.Create().Key, false);
+                    break;
+            }
+            Console.WriteLine("Encrypted DES Key: " + Convert.ToBase64String(encryptedDESKey));
+
+
             // Decrypt Bob's encrypted DES key with Alice's public keys A and B - two separate messages
-            // With the resulting keys - from previous step - encrypt both the real and bogus messages
+            // *** Encrypted data MUST be decrypted with the matching private key - otherwise, error is thrown.
+            //     Instead of decrypting one encrypted DES key with both private keys, there will be the original
+            //     encrypted DES key and a dummy encrypted DES key.
+            switch (keyChosen)
+            {
+                case 0:
+                    AliceKey.ImportParameters(AlicePrivate);
+                    decryptedDESKey1 = AliceKey.Decrypt(encryptedDESKey, false);
+                    AliceKey2.ImportParameters(AlicePrivate2);
+                    decryptedDESKey2 = AliceKey2.Decrypt(encryptedDESDummyKey, false);
+                    break;
+                case 1:
+                    AliceKey2.ImportParameters(AlicePrivate2);
+                    decryptedDESKey1 = AliceKey2.Decrypt(encryptedDESKey, false);
+                    AliceKey.ImportParameters(AlicePrivate);
+                    decryptedDESKey2 = AliceKey.Decrypt(encryptedDESDummyKey, false);
+                    break;
+            }
+            Console.WriteLine("Decrypted Key 1: " + Convert.ToBase64String(decryptedDESKey1));
+            Console.WriteLine("Decrypted Key 2: " + Convert.ToBase64String(decryptedDESKey2));
+
+
+            // With the decrypted keys from previous step, encrypt both the real and bogus messages with DES keys
+            Console.WriteLine("True DES Key: " + Convert.ToBase64String(des.Key));
+
             // Email bob with encrypted messages
+
+
+            // Clear Alice's keys
+            AliceKey.Clear();
+            AliceKey2.Clear();
         }
 
-        public void textMessage_LostFocus(object sender, EventArgs e) 
+        private void btnEncrypt_Click(object sender, EventArgs e)
         {
+            var = textMessage.Text;
+            string cryptedString = Encrypt(var, des.Key, des.IV);
+            textEncrypted.Text = cryptedString;
+            textMessage.Enabled = false;
 
             var bogusMsg = "";
             Random random = new Random();
@@ -64,27 +126,18 @@ namespace DigitalCertifiedMail
                 }
             }
             textBogus.Text = bogusMsg;
-
-        }
-
-        public void btnEncrypt_Click(object sender, EventArgs e)
-        {
-            var = textMessage.Text;
-            string cryptedString = Encrypt(var);
-            textEnc.Text = cryptedString;
-            textMessage.Enabled = false;
         }
         
         private void btnDecrypt_Click(object sender, EventArgs e)
         {
-            string cryptedString = Encrypt(var);
-            textEnc.Text = String.Empty;
+            string cryptedString = Decrypt(textEncrypted.Text, des.Key, des.IV);
+            textEncrypted.Text = String.Empty;
             textBogus.Text = String.Empty;
             textMessage.Enabled = true;
-            textMessage.Text = var;
+            textMessage.Text = cryptedString;
         }
 
-        public static string Encrypt(string var)
+        public static string Encrypt(string var, byte[] key, byte[] IV)
         {
             if (String.IsNullOrEmpty(var))
             {
@@ -92,8 +145,8 @@ namespace DigitalCertifiedMail
             }
 
             DESCryptoServiceProvider cryptoProvider = new DESCryptoServiceProvider();
-            MemoryStream memoryStream = new MemoryStream();
-            CryptoStream cryptoStream = new CryptoStream(memoryStream, cryptoProvider.CreateEncryptor(bytes, bytes), CryptoStreamMode.Write);
+            MemoryStream memoryStream = new MemoryStream(); // Where encryption is stored
+            CryptoStream cryptoStream = new CryptoStream(memoryStream, cryptoProvider.CreateEncryptor(key, IV), CryptoStreamMode.Write);
 
             StreamWriter writer = new StreamWriter(cryptoStream);
             writer.Write(var);
@@ -104,7 +157,7 @@ namespace DigitalCertifiedMail
             return Convert.ToBase64String(memoryStream.GetBuffer(), 0, (int)memoryStream.Length);
         }
 
-        public static string Decrypt(string cryptedString)
+        public static string Decrypt(string cryptedString, byte[] key, byte[] IV)
         {
             if (String.IsNullOrEmpty(cryptedString))
             {
@@ -113,7 +166,7 @@ namespace DigitalCertifiedMail
 
             DESCryptoServiceProvider cryptoProvider = new DESCryptoServiceProvider();
             MemoryStream memoryStream = new MemoryStream(Convert.FromBase64String(cryptedString));
-            CryptoStream cryptoStream = new CryptoStream(memoryStream, cryptoProvider.CreateDecryptor(bytes, bytes), CryptoStreamMode.Read);
+            CryptoStream cryptoStream = new CryptoStream(memoryStream, cryptoProvider.CreateDecryptor(key, IV), CryptoStreamMode.Read);
             StreamReader reader = new StreamReader(cryptoStream);
 
             return reader.ReadToEnd();
@@ -121,7 +174,7 @@ namespace DigitalCertifiedMail
 
         private void textEncrypted_TextChanged(object sender, EventArgs e)
         {
-            if (textEnc.Text != String.Empty)
+            if (textEncrypted.Text != String.Empty)
                 btnSend.Enabled = true;
             else
                 btnSend.Enabled = false;
@@ -142,23 +195,45 @@ namespace DigitalCertifiedMail
                 flag = false;
                 errorMsg += "To\n";
             }
-            if (textEnc.Text == String.Empty)
+            if (textEncrypted.Text == String.Empty)
             {
                 flag = false;
                 errorMsg += "Decrypted Message\n";
             }
 
             if (flag)
-                sendMessage();
+            {
+                DESCryptoServiceProvider cryptoProvider = new DESCryptoServiceProvider();
+                MemoryStream memoryStream = new MemoryStream(); // Where encryption is stored
+                CryptoStream cryptoStream = new CryptoStream(memoryStream, cryptoProvider.CreateEncryptor(decryptedDESKey1, des.IV), CryptoStreamMode.Write);
+                StreamWriter writer = new StreamWriter(cryptoStream);
+                writer.Write("test");
+                writer.Flush();
+                cryptoStream.FlushFinalBlock();
+                writer.Flush();
+                var msg1 = Convert.ToBase64String(memoryStream.GetBuffer(), 0, (int)memoryStream.Length);
+
+                cryptoProvider = new DESCryptoServiceProvider();
+                memoryStream = new MemoryStream(); // Where encryption is stored
+                cryptoStream = new CryptoStream(memoryStream, cryptoProvider.CreateEncryptor(decryptedDESKey2, des.IV), CryptoStreamMode.Write);
+                writer = new StreamWriter(cryptoStream);
+                writer.Write("test");
+                writer.Flush();
+                cryptoStream.FlushFinalBlock();
+                writer.Flush();
+                var msg2 = Convert.ToBase64String(memoryStream.GetBuffer(), 0, (int)memoryStream.Length);
+                sendMessages( new string[] { msg1, msg2 });
+                this.Close();
+            }
             else
                 MessageBox.Show(errorMsg, "Missing Fields");
         }
 
-        private void sendMessage()
+        private void sendMessages(string[] messages)
         {
             MailMessage message = new MailMessage(textFrom.Text, textTo.Text);
             message.Subject = "Please Sign";
-            message.Body = textEnc.Text;
+            message.Body = string.Join("\n\n", messages);
 
             SmtpClient client = new SmtpClient("smtp.mailtrap.io", 2525);
             client.EnableSsl = true;
