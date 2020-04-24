@@ -27,9 +27,28 @@ namespace DigitalCertifiedMail
             this.Close();
         }
 
-        private void listUsers_SelectedIndexChanged(object sender, EventArgs e)
+        private void userList_SelectedIndexChanged(object sender, EventArgs e)
         {
-
+            if(userList.SelectedIndex >= 0)
+            {
+                Login loginForm = new Login(userList.GetItemText(userList.Items[userList.SelectedIndex]));
+                Console.WriteLine("Opening form...");
+                loginForm.ShowDialog();
+                Console.WriteLine("Form closed...");
+                Console.WriteLine("Returned user: " + loginForm.returnUser);
+                if(loginForm.returnUser != String.Empty)
+                {
+                    btnNewMsg.Enabled = true;
+                    btnViewMsgs.Enabled = true;
+                }
+                else
+                {
+                    userList.ResetText();
+                    userList.SelectedIndex = -1;
+                    btnNewMsg.Enabled = false;
+                    btnViewMsgs.Enabled = false;
+                }
+            }
         }
     }
 }
