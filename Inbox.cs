@@ -64,9 +64,19 @@ namespace DigitalCertifiedMail
             textDecMsg2.Text = Decrypt(var2, var4, var5);
 
         }
-
+        
         public static string Decrypt(string cryptedString, byte[] key, byte[] iv)
         {
+            string desKey;
+            //read DES key back
+            string dir = Directory.GetParent(Directory.GetParent(Path.GetDirectoryName(System.AppDomain.CurrentDomain.BaseDirectory)).FullName).FullName + "\\Rec";
+            string path = dir + @"\Keys.txt";
+            System.IO.StreamReader sw = new System.IO.StreamReader(path);
+            desKey = sw.ReadLine();
+            sw.Close();
+
+            Console.WriteLine("DES Key: " + desKey);
+
             if (String.IsNullOrEmpty(cryptedString))
             {
                 throw new ArgumentNullException("The string which needs to be decrypted can not be null.");

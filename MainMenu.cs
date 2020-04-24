@@ -58,6 +58,5 @@ namespace DigitalCertifiedMail
         {
             this.Close();
         }
-
     }
 }

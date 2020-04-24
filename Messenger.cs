@@ -1,9 +1,9 @@
 ﻿using System;
-using System.Windows.Forms;
-using System.Security.Cryptography;
 using System.IO;
-using System.Net.Mail;
 using System.Net;
+using System.Net.Mail;
+using System.Security.Cryptography;
+using System.Windows.Forms;
 
 namespace DigitalCertifiedMail
 {
@@ -96,10 +96,19 @@ namespace DigitalCertifiedMail
             }
             Console.WriteLine("Decrypted Key 1: " + Convert.ToBase64String(decryptedDESKey1));
             Console.WriteLine("Decrypted Key 2: " + Convert.ToBase64String(decryptedDESKey2));
+            Console.WriteLine("Writing to File:");
+            
 
 
             // With the decrypted keys from previous step, encrypt both the real and bogus messages with DES keys
             Console.WriteLine("True DES Key: " + Convert.ToBase64String(des.Key));
+            //Save DES key to Keys.txt
+            string dir = Directory.GetParent(Directory.GetParent(Path.GetDirectoryName(System.AppDomain.CurrentDomain.BaseDirectory)).FullName).FullName + "\\Rec";
+            string path = dir + @"\Keys.txt";
+            System.IO.StreamWriter sw = new System.IO.StreamWriter(path);
+            //StreamWriter sw = new StreamWriter("Test.txt");
+            sw.WriteLine(Convert.ToBase64String(des.Key));
+            sw.Close();
 
             // Email bob with encrypted messages
             // See below
@@ -134,7 +143,7 @@ namespace DigitalCertifiedMail
             textBogus.Text = bogusMsg;
             textEncBogus.Text = Encrypt(bogusMsg, des.Key, des.IV);
         }
-        
+
         private void btnDecrypt_Click(object sender, EventArgs e)
         {
             string cryptedString = Decrypt(textEncrypted.Text, des.Key, des.IV);
@@ -219,7 +228,7 @@ namespace DigitalCertifiedMail
 
             SmtpClient client = new SmtpClient("smtp.mailtrap.io", 2525);
             client.EnableSsl = true;
-            
+
             // Credentials are provided by mailtrap.io
             // Emails using these credentials will be "trapped" in a private inbox.
             client.Credentials = new NetworkCredential("1187a0fe3e0b30", "6c9f57cd6a7a23");
