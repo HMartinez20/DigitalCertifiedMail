@@ -9,10 +9,13 @@ namespace DigitalCertifiedMail
 {
     public partial class Messenger : Form
     {
-        public Messenger()
+        public Messenger(string user)
         {
             InitializeComponent();
+            currentUser = user;
         }
+
+        string currentUser = "";
 
         DES des = DES.Create();
         byte[] decryptedDESKey1 = { }; // These will be used 
@@ -21,6 +24,19 @@ namespace DigitalCertifiedMail
 
         private void Form1_Load(object sender, EventArgs e)
         {
+
+            // Set From value
+            if (currentUser == "Alice")
+            {
+                textFrom.SelectedIndex = 0;
+                textTo.SelectedIndex = 1;
+            }
+            else if (currentUser == "Bob")
+            {
+                textFrom.SelectedIndex = 1;
+                textTo.SelectedIndex = 0;
+            }
+
             // Generate Alice's keys (two pairs of private and public - 4 keys total)
             RSACryptoServiceProvider AliceKey = new RSACryptoServiceProvider();
             RSAParameters AlicePublic = AliceKey.ExportParameters(false);
@@ -33,10 +49,8 @@ namespace DigitalCertifiedMail
             Console.WriteLine("Alice Key  : " + AliceKey.ToXmlString(true));
             Console.WriteLine("Alice Key 2: " + AliceKey2.ToXmlString(true));
 
-
             // Generate Bob's symmetric key using DES
             // See public variable "des"
-
 
             // Use random generator to choose Alice's public key A or B
             // With chosen key (A or B) encrypt Bob's DES key
@@ -88,7 +102,7 @@ namespace DigitalCertifiedMail
             Console.WriteLine("True DES Key: " + Convert.ToBase64String(des.Key));
 
             // Email bob with encrypted messages
-
+            // See below
 
             // Clear Alice's keys
             AliceKey.Clear();
@@ -126,6 +140,7 @@ namespace DigitalCertifiedMail
             string cryptedString = Decrypt(textEncrypted.Text, des.Key, des.IV);
             textEncrypted.Text = String.Empty;
             textBogus.Text = String.Empty;
+            textEncBogus.Text = String.Empty;
             textMessage.Enabled = true;
             textMessage.Text = cryptedString;
         }
@@ -178,21 +193,9 @@ namespace DigitalCertifiedMail
             bool flag = true;
             var errorMsg = "Please include the following:\n";
 
-            if (textFrom.Text == String.Empty)
-            {
-                flag = false;
-                errorMsg += "From\n";
-            }
-            if (textTo.Text == String.Empty)
-            {
-                flag = false;
-                errorMsg += "To\n";
-            }
-            if (textEncrypted.Text == String.Empty)
-            {
-                flag = false;
-                errorMsg += "Decrypted Message\n";
-            }
+            if (textFrom.Text == String.Empty){ flag = false; errorMsg += "From\n";}
+            if (textTo.Text == String.Empty)  { flag = false; errorMsg += "To\n"; }
+            if (textEncrypted.Text == String.Empty){ flag = false; errorMsg += "Decrypted Message\n"; }
 
             if (flag)
             {
@@ -206,12 +209,12 @@ namespace DigitalCertifiedMail
         private void sendMessages()
         {
             // Create messages
-            var msg1 = Encrypt(textEncrypted.Text, decryptedDESKey1, des.IV);
-            var msg2 = Encrypt(textEncBogus.Text, decryptedDESKey2, des.IV);
+            string msg1 = Encrypt(textMessage.Text, decryptedDESKey1, des.IV);
+            string msg2 = Encrypt(textBogus.Text, decryptedDESKey2, des.IV);
 
             // Create email
             MailMessage message = new MailMessage(textFrom.Text, textTo.Text);
-            message.Subject = "New Message!";
+            message.Subject = "Message "+ getMessageNumber();
             message.Body = string.Join("\n\n", msg1, msg2);
 
             SmtpClient client = new SmtpClient("smtp.mailtrap.io", 2525);
@@ -223,40 +226,47 @@ namespace DigitalCertifiedMail
 
             try
             {
-                storeMessage(des, string.Join("\n", msg1, msg2));
+                storeMessage(msg1, msg2);
                 client.Send(message);
                 MessageBox.Show("Email sent!", "Send Message");
             }
             catch (Exception ex)
             {
                 MessageBox.Show("Error!", "Send Message");
-                Console.WriteLine("Exception caught in CreateTestMessage2(): {0}",
-                    ex.ToString());
+                Console.WriteLine("Exception caught in Send Message: {0}", ex.ToString());
             }
         }
 
-        private void storeMessage(DES des, string message)
+        private void storeMessage(string msg1, string msg2)
         {
-            var path = @"";
-            /*
-            using (FileStream fs = File.Create(path))
-            {
-                byte[] info = new UTF8Encoding(true).GetBytes("This is some text in the file.");
-                // Add some information to the file.
-                fs.Write(info, 0, info.Length);
-            }
+            string dir = Directory.GetParent(Directory.GetParent(Path.GetDirectoryName(AppDomain.CurrentDomain.BaseDirectory)).FullName).FullName;
+            if (currentUser == "Alice")
+                dir += @"\Rec\Bob\";
+            else if (currentUser == "Bob")
+                dir += @"\Rec\Alice\";
+            else
+                dir += @"\Rec\";
+            string path = dir + "Message"+getMessageNumber()+".txt";
+            StreamWriter sw = new StreamWriter(path);
+            sw.WriteLine(msg1);
+            sw.WriteLine(msg2);
+            sw.WriteLine(Convert.ToBase64String(decryptedDESKey1));
+            sw.WriteLine(Convert.ToBase64String(decryptedDESKey2));
+            sw.WriteLine(Convert.ToBase64String(des.IV));
+            sw.Close();
+        }        
 
-            // Open the stream and read it back.
-            using (StreamReader sr = File.OpenText(path))
-            {
-                string s = "";
-                while ((s = sr.ReadLine()) != null)
-                {
-                    Console.WriteLine(s);
-                }
-            }
-            */
-        }
+        private int getMessageNumber()
+        {
+            string dir = Directory.GetParent(Directory.GetParent(Path.GetDirectoryName(AppDomain.CurrentDomain.BaseDirectory)).FullName).FullName;
+            if (currentUser == "Alice")
+                dir += @"\Rec\Bob\";
+            else if (currentUser == "Bob")
+                dir += @"\Rec\Alice\";
+            else
+                dir += @"\Rec\";
+
+            return Directory.GetFiles(dir).Length + 1;
+        } 
     }
-   
 }

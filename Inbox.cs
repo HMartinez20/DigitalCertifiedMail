@@ -1,49 +1,71 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
-using System.Drawing;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows.Forms;
 using System.Security.Cryptography;
 using System.IO;
-using System.Management.Instrumentation;
 namespace DigitalCertifiedMail
 {
     public partial class Inbox : Form
     {
-        public Inbox()
+        public Inbox(string user)
         {
             InitializeComponent();
+            currentUser = user;
         }
-        static byte[] bytes = ASCIIEncoding.ASCII.GetBytes("ZeroCool");
+
+        string currentUser = "";
+        
         string var1, var2;
-
-        private void textBox2_TextChanged(object sender, EventArgs e)
+        byte[] var3, var4, var5;
+        string dir = "";
+        private void Inbox_Load(object sender, EventArgs e)
         {
+            dir = Directory.GetParent(Directory.GetParent(Path.GetDirectoryName(AppDomain.CurrentDomain.BaseDirectory)).FullName).FullName;
+            if (currentUser == "Alice")
+                dir += @"\Rec\Alice\";
+            else if (currentUser == "Bob")
+                dir += @"\Rec\Bob\";
+            else
+                dir += @"\Rec\";
 
+            foreach (string file in Directory.GetFiles(dir))
+            {
+                listMessages.Items.Add(file.Remove(file.Length - 4).Substring(file.LastIndexOf("\\") + 1));
+            }
         }
 
         private void button1_Click(object sender, EventArgs e)
         {
-            var1 = textBox1.Text;
-            var2 = textBox2.Text;
-            // string cryptedString = var1;
-            textBox3.Text += Decrypt(var1);
-            textBox4.Text += Decrypt(var2);
+            var path = dir + listMessages.GetItemText(listMessages.SelectedItem) + ".txt";
 
+            using (StreamReader sr = File.OpenText(path))
+            {
+                string s = "";
+                int line = 0;
+                while ((s = sr.ReadLine()) != null)
+                {
+                    if(line == 0)
+                        var1 = s.ToString();
+                    else if (line == 1)
+                        var2 = s.ToString();
+                    else if (line == 2)
+                        var3 = Convert.FromBase64String(s);
+                    else if (line == 3)
+                        var4 = Convert.FromBase64String(s);
+                    else if (line == 4)
+                        var5 = Convert.FromBase64String(s);
+                    line++;
+                }
+                sr.Close();
+            }
 
+            textMsg1.Text = var1;
+            textMsg2.Text = var2;
+            textDecMsg1.Text = Decrypt(var1, var3, var5);
+            textDecMsg2.Text = Decrypt(var2, var4, var5);
 
-            //string cryptedString
-
-            // string cryptedString = Encrypt(var);
-            // textEncrypted.Text = String.Empty;
-            // textMessage.Enabled = true;
-            // textMessage.Text = var;
         }
-        public static string Decrypt(string cryptedString)
+
+        public static string Decrypt(string cryptedString, byte[] key, byte[] iv)
         {
             if (String.IsNullOrEmpty(cryptedString))
             {
@@ -52,13 +74,9 @@ namespace DigitalCertifiedMail
 
             DESCryptoServiceProvider cryptoProvider = new DESCryptoServiceProvider();
             MemoryStream memoryStream = new MemoryStream(Convert.FromBase64String(cryptedString));
-            CryptoStream cryptoStream = new CryptoStream(memoryStream, cryptoProvider.CreateDecryptor(bytes, bytes), CryptoStreamMode.Read);
+            CryptoStream cryptoStream = new CryptoStream(memoryStream, cryptoProvider.CreateDecryptor(key, iv), CryptoStreamMode.Read);
             StreamReader reader = new StreamReader(cryptoStream);
-
             return reader.ReadToEnd();
         }
-     
-
-     
     }
 }
