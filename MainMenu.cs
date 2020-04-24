@@ -50,5 +50,10 @@ namespace DigitalCertifiedMail
                 }
             }
         }
+
+        private void MainMenu_Load(object sender, EventArgs e)
+        {
+
+        }
     }
 }
