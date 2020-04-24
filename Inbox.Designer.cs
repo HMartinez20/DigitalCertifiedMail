@@ -82,6 +82,7 @@
             this.textBox4.ScrollBars = System.Windows.Forms.ScrollBars.Vertical;
             this.textBox4.Size = new System.Drawing.Size(173, 145);
             this.textBox4.TabIndex = 4;
+            this.textBox4.TextChanged += new System.EventHandler(this.TextBox4_TextChanged);
             // 
             // Inbox
             // 
@@ -95,6 +96,7 @@
             this.Controls.Add(this.button1);
             this.Name = "Inbox";
             this.Text = "Inbox";
+            this.Load += new System.EventHandler(this.Inbox_Load);
             this.ResumeLayout(false);
             this.PerformLayout();
 

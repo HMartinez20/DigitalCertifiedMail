@@ -88,11 +88,8 @@ namespace DigitalCertifiedMail
 
             // With the decrypted keys from previous step, encrypt both the real and bogus messages with DES keys
             Console.WriteLine("True DES Key: " + Convert.ToBase64String(des.Key));
-
             //Save DES key to Keys.txt
-            string dir = Path.GetDirectoryName(System.AppDomain.CurrentDomain.BaseDirectory);
-            dir = Directory.GetParent(Directory.GetParent(dir).FullName).FullName;
-            dir += "\\Rec";
+            string dir = Directory.GetParent(Directory.GetParent(Path.GetDirectoryName(System.AppDomain.CurrentDomain.BaseDirectory)).FullName).FullName + "\\Rec";
             string path = dir + @"\Keys.txt";
             System.IO.StreamWriter sw = new System.IO.StreamWriter(path);
             //StreamWriter sw = new StreamWriter("Test.txt");
