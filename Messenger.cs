@@ -1,11 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
-using System.Drawing;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows.Forms;
 using System.Security.Cryptography;
 using System.IO;
@@ -105,8 +98,7 @@ namespace DigitalCertifiedMail
         private void btnEncrypt_Click(object sender, EventArgs e)
         {
             var = textMessage.Text;
-            string cryptedString = Encrypt(var, des.Key, des.IV);
-            textEncrypted.Text = cryptedString;
+            textEncrypted.Text = Encrypt(var, des.Key, des.IV);
             textMessage.Enabled = false;
 
             var bogusMsg = "";
@@ -126,6 +118,7 @@ namespace DigitalCertifiedMail
                 }
             }
             textBogus.Text = bogusMsg;
+            textEncBogus.Text = Encrypt(bogusMsg, des.Key, des.IV);
         }
         
         private void btnDecrypt_Click(object sender, EventArgs e)
@@ -203,37 +196,23 @@ namespace DigitalCertifiedMail
 
             if (flag)
             {
-                DESCryptoServiceProvider cryptoProvider = new DESCryptoServiceProvider();
-                MemoryStream memoryStream = new MemoryStream(); // Where encryption is stored
-                CryptoStream cryptoStream = new CryptoStream(memoryStream, cryptoProvider.CreateEncryptor(decryptedDESKey1, des.IV), CryptoStreamMode.Write);
-                StreamWriter writer = new StreamWriter(cryptoStream);
-                writer.Write("test");
-                writer.Flush();
-                cryptoStream.FlushFinalBlock();
-                writer.Flush();
-                var msg1 = Convert.ToBase64String(memoryStream.GetBuffer(), 0, (int)memoryStream.Length);
-
-                cryptoProvider = new DESCryptoServiceProvider();
-                memoryStream = new MemoryStream(); // Where encryption is stored
-                cryptoStream = new CryptoStream(memoryStream, cryptoProvider.CreateEncryptor(decryptedDESKey2, des.IV), CryptoStreamMode.Write);
-                writer = new StreamWriter(cryptoStream);
-                writer.Write("test");
-                writer.Flush();
-                cryptoStream.FlushFinalBlock();
-                writer.Flush();
-                var msg2 = Convert.ToBase64String(memoryStream.GetBuffer(), 0, (int)memoryStream.Length);
-                sendMessages( new string[] { msg1, msg2 });
+                sendMessages();
                 this.Close();
             }
             else
                 MessageBox.Show(errorMsg, "Missing Fields");
         }
 
-        private void sendMessages(string[] messages)
+        private void sendMessages()
         {
+            // Create messages
+            var msg1 = Encrypt(textEncrypted.Text, decryptedDESKey1, des.IV);
+            var msg2 = Encrypt(textEncBogus.Text, decryptedDESKey2, des.IV);
+
+            // Create email
             MailMessage message = new MailMessage(textFrom.Text, textTo.Text);
-            message.Subject = "Please Sign";
-            message.Body = string.Join("\n\n", messages);
+            message.Subject = "New Message!";
+            message.Body = string.Join("\n\n", msg1, msg2);
 
             SmtpClient client = new SmtpClient("smtp.mailtrap.io", 2525);
             client.EnableSsl = true;
@@ -244,6 +223,7 @@ namespace DigitalCertifiedMail
 
             try
             {
+                storeMessage(des, string.Join("\n", msg1, msg2));
                 client.Send(message);
                 MessageBox.Show("Email sent!", "Send Message");
             }
@@ -253,6 +233,29 @@ namespace DigitalCertifiedMail
                 Console.WriteLine("Exception caught in CreateTestMessage2(): {0}",
                     ex.ToString());
             }
+        }
+
+        private void storeMessage(DES des, string message)
+        {
+            var path = @"";
+            /*
+            using (FileStream fs = File.Create(path))
+            {
+                byte[] info = new UTF8Encoding(true).GetBytes("This is some text in the file.");
+                // Add some information to the file.
+                fs.Write(info, 0, info.Length);
+            }
+
+            // Open the stream and read it back.
+            using (StreamReader sr = File.OpenText(path))
+            {
+                string s = "";
+                while ((s = sr.ReadLine()) != null)
+                {
+                    Console.WriteLine(s);
+                }
+            }
+            */
         }
     }
    
